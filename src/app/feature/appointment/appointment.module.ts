@@ -5,15 +5,22 @@ import { AppointmentRoutingModule } from './appointment-routing.module';
 import { AppointmentsComponent } from './appointments/appointments.component';
 import { SharedModule } from './shared/shared.module';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { MaterialModule } from 'src/app/design/material/material.module';
+import { CreateAppointmentDialogComponent } from './appointments/create-appointment-dialog/create-appointment-dialog.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    AppointmentsComponent
+    AppointmentsComponent,
+    CreateAppointmentDialogComponent
   ],
   imports: [
+    ReactiveFormsModule,
     CommonModule,
+    FormsModule,
     SharedModule,
+    MaterialModule,
     AppointmentRoutingModule,
     CalendarModule.forRoot({
       provide: DateAdapter,

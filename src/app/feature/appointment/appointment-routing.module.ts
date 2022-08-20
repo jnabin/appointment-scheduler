@@ -6,7 +6,11 @@ const routes: Routes = [
   {
     path: '',
     component: AppointmentsComponent
-  }
+  },
+  {
+    path: ':month',
+    component: AppointmentsComponent
+  },
 ];
 
 @NgModule({

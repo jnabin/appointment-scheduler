@@ -101,6 +101,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     // DragDropModule,
     // ScrollingModule,
     MatMenuModule,
+    MatFormFieldModule,
+    MatInputModule,
     // MatStepperModule,
     // MatProgressBarModule,
     // MatProgressSpinnerModule,

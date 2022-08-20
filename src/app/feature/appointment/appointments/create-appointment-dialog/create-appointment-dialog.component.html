@@ -1,0 +1,81 @@
+<form #form [formGroup]="appointmentForm">
+    <mat-form-field class="example-full-width w-100" appearance="fill">
+        <mat-label>First Name</mat-label>
+        <input matInput type="text" formControlName="firstName" placeholder="Enter first name">
+        <mat-error *ngIf="mainService.firstName?.invalid && (mainService.firstName?.dirty || mainService.firstName?.touched)">
+            <span *ngIf="mainService.firstName?.errors?.['required']">
+                First name is required.
+            </span>
+            <span *ngIf="mainService.firstName?.errors?.['maxlength']">
+                First name must be at most 40 characters long.
+            </span>
+        </mat-error>
+    </mat-form-field>
+    <div>
+        <mat-form-field class="example-full-width w-100" appearance="fill">
+            <mat-label>Last Name</mat-label>
+            <input matInput type="text" formControlName="lastName" placeholder="Enter last name">
+            <mat-error *ngIf="mainService.lastName?.invalid && (mainService.lastName?.dirty || mainService.lastName?.touched)">
+                <span *ngIf="mainService.lastName?.errors?.['required']">
+                    Last name is required.
+                </span>
+                <span *ngIf="mainService.lastName?.errors?.['maxlength']">
+                    Last name must be at most 40 characters long.
+                </span>
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field class="example-full-width w-100" appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter email">
+            <mat-error *ngIf="mainService.email?.invalid && (mainService.email?.dirty || mainService.email?.touched)">
+                <span *ngIf="mainService.email?.errors?.['required']">
+                    Email is required.
+                </span>
+                <span *ngIf="mainService.email?.errors?.['email']">
+                    Incorrect email
+                </span>
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="mb-3">
+        <mat-label class="me-2">Gender</mat-label>
+        <mat-radio-group formControlName="gender" id="gender" aria-label="Select an option">
+            <mat-radio-button class="me-1" value="male">Male</mat-radio-button>
+            <mat-radio-button value="female">Female</mat-radio-button>
+        </mat-radio-group> 
+    </div>
+
+    <div>
+        <mat-form-field class="example-full-width w-100" appearance="fill">
+            <mat-label>Age</mat-label>
+            <input matInput type="number" min="0" formControlName="age" placeholder="Enter age">
+            <mat-error *ngIf="mainService.age?.invalid && (mainService.age?.dirty || mainService.age?.touched)">
+                Incorrect age
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field class="example-full-width w-100" appearance="fill">
+            <mat-label>Date</mat-label>
+            <input matInput type="date" formControlName="date" placeholder="Enter date">
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field class="example-full-width w-100" appearance="fill">
+            <mat-label>Time</mat-label>
+            <input matInput type="time" formControlName="time" placeholder="Enter time">
+        </mat-form-field>
+    </div>
+<!--     
+    <button type="submit" class="btn btn-primary">Submit</button> -->
+    <div mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">No Thanks</button>
+        <button mat-button (click)="onSubmit()" cdkFocusInitial>Submit</button>
+      </div>
+  </form>

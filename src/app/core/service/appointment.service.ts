@@ -39,10 +39,9 @@ export class AppointmentService {
   }
 
   setAppointment(item: Appointment) {
-    item.id = Date.now();
-    this.updateLocalStorage(item);
+    item.id = Date.now();   
     this.appointments = [];
-    this.appointments.push(item);
+    this.updateLocalStorage(item);
     this._appointmentList.next(this.appointments);
   }
 
@@ -52,9 +51,9 @@ export class AppointmentService {
       data.push(...(JSON.parse(localStorage.getItem('appoontments') || ''))); 
     } 
     data.push(item);
-    console.log(data);
     localStorage.removeItem('appoontments');
     localStorage.setItem('appoontments', JSON.stringify(data));
+    this.appointments = data;
   }
 
   public get form() {

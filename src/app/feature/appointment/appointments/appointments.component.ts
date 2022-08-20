@@ -1,28 +1,15 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  addHours,
-} from 'date-fns';
-import { Observable, Subject } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, EventEmitter, Input, OnDestroy, OnInit} from '@angular/core';
 import {
   CalendarEvent,
   CalendarEventAction,
-  CalendarEventTimesChangedEvent,
   CalendarView,
 } from 'angular-calendar';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateAppointmentDialogComponent } from './create-appointment-dialog/create-appointment-dialog.component';
-import { ActivatedRoute } from '@angular/router';
-import { FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'src/app/core/service/appointment.service';
 import { Appointment } from 'src/app/core/model/appointment';
+import { ViewAppointmentComponent } from './view-appointment/view-appointment.component';
 
 const colors: any = {
   red: {
@@ -46,57 +33,40 @@ const colors: any = {
 })
 export class AppointmentsComponent implements OnInit, OnDestroy {
 
-  @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any> | undefined;
   @Input() set currentView(value: any) {
     this._currentView = value;
-    this.updateCalenderEvents();
   }
-  @Output() filtered = new EventEmitter<any>();
 
   _currentView: any
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
-  sortValue = "id asc";
-  filter: any[] = [
-		{
-			"key": "due_date",
-			"op": "between",
-			"value": `2022-0${this.viewDate.getMonth()+1}-01`,
-			"between": `2022-0${this.viewDate.getMonth()+2}-01`
-		}
-	];
-  modalData: {
-    action: string;
-    event: CalendarEvent;
-  } | undefined;
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
+  actions: CalendarEventAction[] = [];
   subscription: any;
   appointments: Appointment[] = [];
   events: CalendarEvent[] = [];
-  refresh = new Subject<void>();
   activeDayIsOpen = true;
+  currentMonth = this.viewDate.getMonth();
+  months = [
+    {id: 0, name: 'January'},
+    {id: 1, name: 'February'},
+    {id: 2, name: 'March'},
+    {id: 3, name: 'April'},
+    {id: 4, name: 'May'},
+    {id: 5, name: 'June'},
+    {id: 6, name: 'July'},
+    {id: 7, name: 'August'},
+    {id: 8, name: 'September'},
+    {id: 9, name: 'Actobor'},
+    {id: 10, name: 'November'},
+    {id: 11, name: 'December'},
+  ]
 
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
-    private mainService: AppointmentService
+    private mainService: AppointmentService,
+    private router: Router
     ) {
   }
 
@@ -110,9 +80,9 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       let month = params["month"];
-      console.log(month);
       if(month >= 1 && month <= 12) {
         this.viewDate.setMonth(month-1);
+        this.currentMonth = month - 1;
       }
     });
   }
@@ -121,7 +91,11 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
     if (this.subscription) this.subscription.unsubscribe();
   }
 
-  
+  updateViewDate(){
+    this.viewDate.setMonth(this.currentMonth);
+    this.closeOpenMonthViewDay();
+  }
+
   updateCalenderEvents() {
     this.events = [];
     this.appointments.forEach(x => {
@@ -138,76 +112,10 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
         }
       );
     });
-    this.refresh.next();
   }
 
-  assignAddress(item: any){
-    let address = ""
-    address += item['civic'] ? item['civic'] + ' ' : ''
-    address += item['parcel'] ? item['parcel'] + ' ' : ''
-    address += item['street'] ? item['street'] + ', ' : ''
-    address += item['apartment'] ? 'apt.' + item['apartment'] + ', ' : ''
-
-    item = Object.assign(item, {address: address.substring(0, address.length - 2)})
-    return item
-  }
-
-  parsePhoneNumber(obj: { [x: string]: string; }, key: string){
-    //todo
-  }
-
-  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-    if (isSameMonth(date, this.viewDate)) {
-      if (
-        (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-        events.length === 0
-      ) {
-        this.activeDayIsOpen = false;
-      } else {
-        this.activeDayIsOpen = true;
-      }
-      this.viewDate = date;
-    }
-  }
-
-  eventTimesChanged({
-    event,
-    newStart,
-    newEnd,
-  }: CalendarEventTimesChangedEvent): void {
-    this.events = this.events.map((iEvent) => {
-      if (iEvent === event) {
-        return {
-          ...event,
-          start: newStart,
-          end: newEnd,
-        };
-      }
-      return iEvent;
-    });
-    this.handleEvent('Dropped or resized', event);
-  }
-
-  handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    //this.modal.open(this.modalContent, { size: 'lg' });
-  }
-
-  addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors.red,
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
-    ];
+  get count() {
+    return this.events.filter(x => x.start.getMonth() == this.viewDate.getMonth()).length;
   }
 
   openDialog(): void {
@@ -221,9 +129,17 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
     });
   }
 
+  viewAppointment(id: number) {
+    let ap = this.appointments.find(x => x.id == id);
 
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
+    const dialogRef = this.dialog.open(ViewAppointmentComponent, {
+      width: '450px',
+      data: {appointMent: ap},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
   setView(view: CalendarView) {

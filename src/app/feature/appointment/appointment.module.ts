@@ -8,12 +8,14 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { MaterialModule } from 'src/app/design/material/material.module';
 import { CreateAppointmentDialogComponent } from './appointments/create-appointment-dialog/create-appointment-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ViewAppointmentComponent } from './appointments/view-appointment/view-appointment.component';
 
 
 @NgModule({
   declarations: [
     AppointmentsComponent,
-    CreateAppointmentDialogComponent
+    CreateAppointmentDialogComponent,
+    ViewAppointmentComponent
   ],
   imports: [
     ReactiveFormsModule,

@@ -1,0 +1,36 @@
+<div class="p-3">
+    <table>
+        <tr>
+            <td class="pe-5">First Name: </td>
+            <td style="text-transform: capitalize;">{{appointMent.firstName}}</td>
+        </tr>
+        <tr>
+            <td class="pe-5">Last Name: </td>
+            <td style="text-transform: capitalize;">{{appointMent.firstName}}</td>
+        </tr>
+        <tr>
+            <td class="pe-5">Email: </td>
+            <td>{{appointMent.email}}</td>
+        </tr>
+        <tr>
+            <td class="pe-5">Gender: </td>
+            <td>{{appointMent.gender}}</td>
+        </tr>
+        <tr>
+            <td class="pe-5">Age: </td>
+            <td>{{appointMent.age}}</td>
+        </tr>
+        <tr>
+            <td class="pe-5">Date: </td>
+            <td>{{appointMent.date}}</td>
+        </tr>
+        <tr>
+            <td class="pe-5">Time: </td>
+            <td>{{appointMent.time}}</td>
+        </tr>
+       
+    </table>
+    <div mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">Close</button>
+      </div>
+</div>
